@@ -1,0 +1,161 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --background: #FFFFFF;
+    --foreground: #0A0A0A;
+
+    --card: #FFFFFF;
+    --card-foreground: #0A0A0A;
+
+    --popover: #FFFFFF;
+    --popover-foreground: #0A0A0A;
+
+    --primary: #987E6F;
+    --primary-foreground: #FAFAFA;
+
+    --secondary: #E7DACA;
+    --secondary-foreground: #171717;
+
+    --secondary-50: #E7DACA80;
+    --secondary-25: #E7DACA40;
+
+    --accent-1: #C5A282;
+    --accent-2: #D5BFAA;
+    --accent-3: #F9F2EA;
+
+    --muted: #C4A69D;
+    --muted-foreground: #737373;
+
+    --accent: #B67F6E;
+    --accent-foreground: #171717;
+
+    --destructive: #EF4444;
+    --destructive-foreground: #FAFAFA;
+
+    --border: #E5E5E5;
+    --input: #E5E5E5;
+    --ring: #0A0A0A;
+
+    --radius: 0.5rem;
+
+    /* WhatsApp Colors */
+    --whatsapp-bg: #111b21;
+    --whatsapp-panel: #202c33;
+    --whatsapp-hover: #2a3942;
+    --whatsapp-text: #e9edef;
+    --whatsapp-text-secondary: #8696a0;
+    --whatsapp-outgoing: #005c4b;
+    --whatsapp-incoming: #202c33;
+    --whatsapp-green: #00a884;
+    --chart-1: #E85D3F;
+    --chart-2: #2A8B8B;
+    --chart-3: #1E3C4A;
+    --chart-4: #E6B52C;
+    --chart-5: #F4733E;
+  }
+
+  .dark {
+    --background: #0A0A0A;
+    --foreground: #FAFAFA;
+
+    --card: #0A0A0A;
+    --card-foreground: #FAFAFA;
+
+    --popover: #0A0A0A;
+    --popover-foreground: #FAFAFA;
+
+    --primary: #FAFAFA;
+    --primary-foreground: #171717;
+
+    --secondary: #262626;
+    --secondary-foreground: #FAFAFA;
+
+    --muted: #262626;
+    --muted-foreground: #A3A3A3;
+
+    --accent: #262626;
+    --accent-foreground: #FAFAFA;
+
+    --destructive: #7F1D1D;
+    --destructive-foreground: #FAFAFA;
+
+    --border: #262626;
+    --input: #262626;
+    --ring: #D4D4D4;
+    --chart-1: #2B6FF3;
+    --chart-2: #2B917A;
+    --chart-3: #E67E22;
+    --chart-4: #9B4DDB;
+    --chart-5: #E94B7F;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+
+  html,
+  body {
+    @apply h-full antialiased;
+  }
+
+  body {
+    @apply bg-background text-foreground flex flex-col;
+  }
+}
+
+/* Custom CSS Classes */
+@layer components {
+  .btn-primary {
+    @apply bg-primary text-white hover:bg-green-600 transition-colors duration-200;
+  }
+
+  .btn-secondary {
+    @apply bg-secondary text-primary hover:bg-green-200 transition-colors duration-200;
+  }
+
+  .sidebar {
+    @apply bg-primary text-white;
+  }
+
+  .sidebar-item {
+    @apply hover:bg-green-600 transition-colors duration-200;
+  }
+
+  .card {
+    @apply bg-white border border-green-200 rounded-lg shadow-sm;
+  }
+
+  .header {
+    @apply bg-secondary text-primary;
+  }
+
+  .whatsapp-bg {
+    background-color: var(--whatsapp-bg);
+    background-image: url('/whatsapp-bg.png');
+    background-repeat: repeat;
+    opacity: 0.06;
+  }
+
+  .chat-bubble-outgoing::after {
+    content: '';
+    position: absolute;
+    right: -8px;
+    top: 0;
+    border: 8px solid transparent;
+    border-top-color: var(--whatsapp-outgoing);
+  }
+
+  .chat-bubble-incoming::before {
+    content: '';
+    position: absolute;
+    left: -8px;
+    top: 0;
+    border: 8px solid transparent;
+    border-top-color: var(--whatsapp-incoming);
+  }
+}

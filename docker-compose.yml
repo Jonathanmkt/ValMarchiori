@@ -1,0 +1,16 @@
+version: '3'
+services:
+  app:
+    image: valmarchiori-app
+    networks:
+      - Singanet
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.valmarchiori.rule=Host(`valmarchiori.virtuetech.com.br`)"
+      - "traefik.http.routers.valmarchiori.entrypoints=websecure"
+      - "traefik.http.routers.valmarchiori.tls=true"
+      - "traefik.http.services.valmarchiori.loadbalancer.server.port=3000"
+
+networks:
+  Singanet:
+    external: true
