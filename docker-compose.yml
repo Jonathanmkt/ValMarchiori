@@ -1,8 +1,7 @@
 version: '3.8'
 services:
-  app:
-    build: .
-    image: valmarchiori-app:latest
+  web-app:
+    image: valmarchiori:latest
     networks:
       - Singanet
     deploy:
@@ -20,7 +19,7 @@ services:
         - traefik.http.routers.valmarchiori.rule=Host(`valmarchiori.virtuetech.com.br`)
         - traefik.http.routers.valmarchiori.entrypoints=websecure
         - traefik.http.routers.valmarchiori.tls.certresolver=letsencryptresolver
-        - traefik.http.services.valmarchiori.loadbalancer.server.port=3000
+        - traefik.http.services.valmarchiori.loadbalancer.server.port=80
         - traefik.http.services.valmarchiori.loadbalancer.passHostHeader=true
         - traefik.http.routers.valmarchiori.service=valmarchiori
 
