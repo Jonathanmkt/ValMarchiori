@@ -1,35 +1,33 @@
-# syntax=docker.io/docker/dockerfile:1
-
-# Estágio base para compartilhar configurações
+# Stage 1: Dependências e base
 FROM node:18-alpine AS base
 WORKDIR /app
-ENV NEXT_TELEMETRY_DISABLED=1
-
-# Estágio para instalar dependências
-FROM base AS deps
-RUN apk add --no-cache libc6-compat
-COPY package.json package-lock.json* ./
+COPY package.json package-lock.json ./
 RUN npm ci
+RUN apk add --no-cache libc6-compat
 
-# Estágio para construção
+# Stage 2: Construção para produção
 FROM base AS builder
-COPY --from=deps /app/node_modules ./node_modules
+WORKDIR /app
 COPY . .
+ENV NEXT_TELEMETRY_DISABLED 1
 RUN npm run build
 
-# Estágio final
-FROM base AS runner
+# Stage 3: Ambiente de produção
+FROM node:18-alpine AS production
+WORKDIR /app
+ENV NODE_ENV production
+ENV NEXT_TELEMETRY_DISABLED 1
+
+# Copiar apenas arquivos necessários
+COPY --from=builder /app/public ./public
+COPY --from=builder /app/.next ./.next
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/package.json ./package.json
+
+# Usuário não-root para segurança
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
-
-# Define o diretório para os arquivos standalone
-COPY --from=builder /app/public ./public
-COPY --from=builder --chown=nextjs:nodejs /app/.next/standalone ./
-COPY --from=builder --chown=nextjs:nodejs /app/.next/static ./.next/static
-
 USER nextjs
-EXPOSE 3000
-ENV PORT 3000
-ENV HOSTNAME "0.0.0.0"
 
-CMD ["node", "server.js"]
+EXPOSE 3000
+CMD ["npm", "run", "start"]
