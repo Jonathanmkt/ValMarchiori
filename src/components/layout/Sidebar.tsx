@@ -132,7 +132,7 @@ export function Sidebar({ links }: SidebarProps) {
           >
             <div className="w-[180px] flex flex-col whitespace-nowrap">
               <h1 className='text-2xl font-semibold text-white leading-none font-playfair'>
-                Coder
+                Vibedocer
               </h1>
               <span className='text-sm text-white/60'>Surfando o código</span>
             </div>
