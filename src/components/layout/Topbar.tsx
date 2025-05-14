@@ -16,7 +16,7 @@ export function TopBar({ pageTitle }: TopBarProps) {
     if (pathname?.includes('/clientes')) return 'Clientes';
     
     // Título padrão para outras páginas
-    return pageTitle || 'Painel Administrativo';
+    return pageTitle || '';
   };
   
   return (
