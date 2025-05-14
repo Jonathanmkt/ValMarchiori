@@ -9,7 +9,16 @@ RUN apk add --no-cache libc6-compat
 FROM base AS builder
 WORKDIR /app
 COPY . .
+
+# Argumentos do build
+ARG NEXT_PUBLIC_SUPABASE_URL
+ARG NEXT_PUBLIC_SUPABASE_ANON_KEY
+
+# Variáveis de ambiente para build
+ENV NEXT_PUBLIC_SUPABASE_URL=$NEXT_PUBLIC_SUPABASE_URL
+ENV NEXT_PUBLIC_SUPABASE_ANON_KEY=$NEXT_PUBLIC_SUPABASE_ANON_KEY
 ENV NEXT_TELEMETRY_DISABLED 1
+
 RUN npm run build
 
 # Stage 3: Ambiente de produção
@@ -17,6 +26,14 @@ FROM node:18-alpine AS production
 WORKDIR /app
 ENV NODE_ENV production
 ENV NEXT_TELEMETRY_DISABLED 1
+
+# Argumentos do build para produção
+ARG NEXT_PUBLIC_SUPABASE_URL
+ARG NEXT_PUBLIC_SUPABASE_ANON_KEY
+
+# Variáveis de ambiente para produção
+ENV NEXT_PUBLIC_SUPABASE_URL=$NEXT_PUBLIC_SUPABASE_URL
+ENV NEXT_PUBLIC_SUPABASE_ANON_KEY=$NEXT_PUBLIC_SUPABASE_ANON_KEY
 
 # Copiar apenas arquivos necessários
 COPY --from=builder /app/public ./public
