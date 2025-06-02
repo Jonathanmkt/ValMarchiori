@@ -1,0 +1,30 @@
+version: '3'
+services:
+  agendamentos:
+    image: ghcr.io/jonathanmkt/agendamentos:latest
+    networks:
+      - Singanet
+    deploy:
+      resources:
+        limits:
+          cpus: '0.5'
+          memory: 512M
+      labels:
+      - traefik.enable=1
+      - traefik.http.routers.agendamentos.rule=Host(`agendamento.virtuetech.com.br`)
+      - traefik.http.routers.agendamentos.entrypoints=websecure
+      - traefik.http.routers.agendamentos.priority=1
+      - traefik.http.routers.agendamentos.tls.certresolver=letsencryptresolver
+      - traefik.http.routers.agendamentos.service=agendamentos
+      - traefik.http.services.agendamentos.loadbalancer.server.port=3000
+      - traefik.http.services.agendamentos.loadbalancer.passHostHeader=true
+      placement:
+        constraints:
+          - node.role == manager
+    environment:
+      - NEXT_PUBLIC_SUPABASE_URL=${NEXT_PUBLIC_SUPABASE_URL}
+      - NEXT_PUBLIC_SUPABASE_ANON_KEY=${NEXT_PUBLIC_SUPABASE_ANON_KEY}
+
+networks:
+  Singanet:
+    external: true
