@@ -4,11 +4,10 @@ import React from 'react';
 import { motion as m } from 'framer-motion';
 const motion = m;
 import Link from 'next/link';
-import Image from 'next/image';
 import { cn } from '@/lib/utils/utils';
 import { useSidebar } from './SidebarContext';
 import { useNavigation } from '@/hooks/useNavigation/useNavigation';
-import { LucideIcon } from 'lucide-react';
+import { LucideIcon, CalendarDays } from 'lucide-react';
 
 interface SidebarLink {
   title: string;
@@ -100,13 +99,9 @@ export function Sidebar({ links }: SidebarProps) {
                 }
               )}
             >
-              <Image
-                src='/code_icon.png'
-                alt='Code Icon'
-                width={80}
-                height={80}
-                className="block rounded-full"
-              />
+              <div className="flex items-center justify-center w-[80px] h-[80px] bg-gray-400 rounded-full">
+                <CalendarDays size={60} className="text-primary" />
+              </div>
             </motion.div>
           </motion.div>
           <motion.div 
@@ -131,10 +126,10 @@ export function Sidebar({ links }: SidebarProps) {
             )}
           >
             <div className="w-[180px] flex flex-col whitespace-nowrap">
-              <h1 className='text-2xl font-semibold text-white leading-none font-playfair'>
-                Vibedocer
+              <h1 className='text-2xl font-semibold text-gray-400 leading-none font-playfair'>
+                Agendamentos
               </h1>
-              <span className='text-sm text-white/60'>Surfando o código</span>
+              <span className='text-sm text-white/60'>Organização e tecnologia</span>
             </div>
           </motion.div>
         </div>

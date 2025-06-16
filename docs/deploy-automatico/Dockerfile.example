@@ -1,0 +1,79 @@
+# Exemplo de Dockerfile para projetos Next.js
+# Este arquivo configura um build multi-estágio para otimizar o tamanho final da imagem
+# e separar ambientes de desenvolvimento, build e produção.
+
+# Stage 1: Dependências e base
+# Utilizamos uma imagem Alpine do Node.js 18 por ser leve e ter bom suporte para Next.js
+FROM node:18-alpine AS base
+WORKDIR /app
+# Copiamos apenas os arquivos de dependências primeiro para aproveitar o cache do Docker
+COPY package.json package-lock.json ./
+# Instalamos as dependências com 'clean install' para garantir exatamente as mesmas versões
+RUN npm ci
+# Instalação de dependências necessárias para o Alpine Linux
+RUN apk add --no-cache libc6-compat
+
+# Stage 2: Construção para produção
+# Este estágio é responsável pelo build da aplicação Next.js
+FROM base AS builder
+WORKDIR /app
+# Copiamos todo o código-fonte
+COPY . .
+
+# Argumentos do build - Serão fornecidos durante o build pelo GitHub Actions
+# Estes são necessários para configurar o Supabase durante o build
+ARG NEXT_PUBLIC_SUPABASE_URL
+ARG NEXT_PUBLIC_SUPABASE_ANON_KEY
+ARG SUPABASE_SERVICE_ROLE_KEY
+ARG SUPABASE_URL
+
+# Variáveis de ambiente para build
+# Estas variáveis estarão disponíveis durante o processo de build
+ENV NEXT_PUBLIC_SUPABASE_URL=$NEXT_PUBLIC_SUPABASE_URL
+ENV NEXT_PUBLIC_SUPABASE_ANON_KEY=$NEXT_PUBLIC_SUPABASE_ANON_KEY
+ENV SUPABASE_SERVICE_ROLE_KEY=$SUPABASE_SERVICE_ROLE_KEY
+ENV SUPABASE_URL=$SUPABASE_URL
+# Desabilita telemetria do Next.js
+ENV NEXT_TELEMETRY_DISABLED 1
+
+# Executa o build da aplicação
+RUN npm run build
+
+# Stage 3: Ambiente de produção
+# Este estágio contém apenas o necessário para executar a aplicação
+FROM node:18-alpine AS production
+WORKDIR /app
+# Define o ambiente como produção
+ENV NODE_ENV production
+ENV NEXT_TELEMETRY_DISABLED 1
+
+# Argumentos do build para produção
+ARG NEXT_PUBLIC_SUPABASE_URL
+ARG NEXT_PUBLIC_SUPABASE_ANON_KEY
+ARG SUPABASE_SERVICE_ROLE_KEY
+ARG SUPABASE_URL
+
+# Variáveis de ambiente para produção
+# Estas variáveis estarão disponíveis em runtime para a aplicação
+ENV NEXT_PUBLIC_SUPABASE_URL=$NEXT_PUBLIC_SUPABASE_URL
+ENV NEXT_PUBLIC_SUPABASE_ANON_KEY=$NEXT_PUBLIC_SUPABASE_ANON_KEY
+ENV SUPABASE_SERVICE_ROLE_KEY=$SUPABASE_SERVICE_ROLE_KEY
+ENV SUPABASE_URL=$SUPABASE_URL
+
+# Copiar apenas arquivos necessários do estágio de build
+# Isso mantém a imagem final menor e mais segura
+COPY --from=builder /app/public ./public
+COPY --from=builder /app/.next ./.next
+COPY --from=builder /app/node_modules ./node_modules
+COPY --from=builder /app/package.json ./package.json
+
+# Configuração de segurança: usuário não-root
+# É uma boa prática de segurança não executar containers como root
+RUN addgroup --system --gid 1001 nodejs
+RUN adduser --system --uid 1001 nextjs
+USER nextjs
+
+# Expõe a porta 3000 para acesso à aplicação
+EXPOSE 3000
+# Comando para iniciar a aplicação
+CMD ["npm", "run", "start"]

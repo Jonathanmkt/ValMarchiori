@@ -8,7 +8,6 @@
     "start": "next start",
     "lint": "eslint . --ext .js,.ts,.tsx"
   },
-
   "devDependencies": {
     "@types/node": "^20.17.30",
     "@types/react": "18.3.20",
@@ -98,6 +97,7 @@
     "socket.io-client": "^4.8.1",
     "sonner": "^2.0.3",
     "tailwind-merge": "^1.14.0",
+    "tailwind-scrollbar": "^3.0.5",
     "tailwindcss-animate": "^1.0.7",
     "uuid": "^11.1.0",
     "vaul": "^1.1.2",

@@ -45,6 +45,10 @@ module.exports = {
           DEFAULT: 'var(--secondary)',
           foreground: 'var(--secondary-foreground)'
         },
+        tertiary: {
+          DEFAULT: 'var(--tertiary)',
+          foreground: 'var(--tertiary-foreground)'
+        },
         destructive: {
           DEFAULT: 'var(--destructive)',
           foreground: 'var(--destructive-foreground)'
@@ -59,6 +63,10 @@ module.exports = {
           1: 'var(--accent-1)',
           2: 'var(--accent-2)',
           3: 'var(--accent-3)'
+        },
+        light: {
+          DEFAULT: 'var(--light)',
+          foreground: 'var(--light-foreground)'
         },
         popover: {
           DEFAULT: 'var(--popover)',

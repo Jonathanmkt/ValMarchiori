@@ -1,0 +1,97 @@
+# Exemplo de arquivo de workflow do GitHub Actions para build e deploy automático
+# Este arquivo deve ser colocado em .github/workflows/ no seu projeto
+
+# Nome do workflow - aparecerá na interface do GitHub Actions
+name: Docker Build and Publish
+
+# Trigger: define quando o workflow será executado
+# Neste caso, quando houver push na branch master
+on:
+  push:
+    branches:
+      - master
+
+# Variáveis de ambiente globais para todo o workflow
+env:
+  # Registro de containers - GitHub Container Registry
+  REGISTRY: ghcr.io
+  # Nome da imagem - IMPORTANTE: use minúsculas e substitua pelo nome do seu projeto
+  IMAGE_NAME: jonathanmkt/vibecoder
+  # Estas variáveis são apenas para referência no workflow, os valores vêm das secrets
+
+# Definição dos jobs do workflow
+jobs:
+  # Job principal de build e push da imagem
+  build-and-push:
+    # Sistema operacional onde o job será executado
+    runs-on: ubuntu-latest
+    
+    # Permissões necessárias para o job
+    # IMPORTANTE: estas permissões são essenciais para o funcionamento correto
+    permissions:
+      contents: read    # Permite ler o código do repositório
+      packages: write   # Permite publicar pacotes (imagens Docker)
+      actions: read     # Permite ler informações de actions
+      id-token: write   # Permite gerar tokens de identidade
+
+    # Passos do job
+    steps:
+      # Passo 1: Checkout do código
+      # Clona o repositório para ter acesso aos arquivos
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Passo 2: Configuração do Docker Buildx
+      # Buildx oferece recursos avançados para build de imagens Docker
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      # Passo 3: Login no GitHub Container Registry
+      # Autentica o workflow para poder publicar imagens
+      - name: Log in to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.repository_owner }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      # Passo 4: Extração de metadados para a imagem Docker
+      # Gera tags e labels para a imagem baseados no contexto do commit
+      - name: Extract metadata for Docker
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=sha,format=long   # Tag com o hash do commit
+            type=raw,value=latest  # Tag "latest"
+
+      # Passo 5: Build e push da imagem Docker
+      # Constrói a imagem usando o Dockerfile e faz upload para o GHCR
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          # Diretório onde estão os arquivos do projeto
+          context: .
+          # Indica que a imagem deve ser enviada para o registro
+          push: true
+          # Tags geradas no passo anterior
+          tags: ${{ steps.meta.outputs.tags }}
+          # Labels gerados no passo anterior
+          labels: ${{ steps.meta.outputs.labels }}
+          # Configurações de cache para acelerar builds futuros
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+          # Argumentos passados para o Dockerfile durante o build
+          # Estas são secrets configuradas no repositório do GitHub
+          build-args: |
+            NEXT_PUBLIC_SUPABASE_URL=${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
+            NEXT_PUBLIC_SUPABASE_ANON_KEY=${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}
+            SUPABASE_SERVICE_ROLE_KEY=${{ secrets.SUPABASE_SERVICE_ROLE_KEY }}
+            SUPABASE_URL=${{ secrets.SUPABASE_URL }}
+
+      # Passo 6: Trigger do webhook do Portainer
+      # Aciona o webhook configurado no Portainer para atualizar o container
+      - name: Trigger Portainer Webhook
+        run: |
+          curl -X POST ${{ secrets.PORTAINER_WEBHOOK_URL }}

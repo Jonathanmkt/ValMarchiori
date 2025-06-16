@@ -5,7 +5,7 @@ import { Toast } from '@/components/ui/toast';
 import { Sidebar } from './Sidebar';
 import { TopBar } from './Topbar';
 import { SidebarProvider } from './SidebarContext';
-import { CalendarDays, Users } from 'lucide-react';
+import { CalendarDays, Users, Package2 } from 'lucide-react';
 import { MobileNavBar } from './MobileNavBar';
 
 interface PainelLayoutProps {
@@ -14,14 +14,19 @@ interface PainelLayoutProps {
 
 const sidebarLinks = [
   {
-    title: 'Leads',
-    href: '/painel/page1',
+    title: 'Clientes',
+    href: '/painel/pacientes',
     icon: Users
   },
   {
     title: 'Agendamentos',
-    href: '/painel/page2',
+    href: '/painel/agendamentos',
     icon: CalendarDays
+  },
+  {
+    title: 'Serviços',
+    href: '/painel/servicos',
+    icon: Package2
   }
 ];
 
@@ -30,7 +35,7 @@ export default function PainelLayout({ children }: PainelLayoutProps) {
     <SidebarProvider>
       <>
         {/* Desktop Layout */}
-        <div className='min-h-screen bg-secondary flex md:flex hidden'>
+        <div className='min-h-screen bg-tertiary hidden md:flex'>
           <Sidebar links={sidebarLinks} />
 
           {/* Main Content */}
@@ -45,7 +50,7 @@ export default function PainelLayout({ children }: PainelLayoutProps) {
         </div>
 
         {/* Mobile Layout */}
-        <div className='min-h-screen bg-secondary flex flex-col md:hidden'>
+        <div className='min-h-screen bg-tertiary flex flex-col md:hidden'>
           <div className='flex-1 w-full pb-16'>
             {children}
           </div>

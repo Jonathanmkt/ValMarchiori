@@ -7,7 +7,7 @@ export default function PainelPage() {
   const router = useRouter();
 
   useEffect(() => {
-    router.replace('/painel/page1');
+    router.replace('/painel/pacientes');
   }, [router]);
 
   return null;

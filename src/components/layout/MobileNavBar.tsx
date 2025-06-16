@@ -12,10 +12,10 @@ export function MobileNavBar() {
   return (
     <nav className="fixed bottom-0 left-0 right-0 bg-primary h-16 flex items-center justify-center gap-16 md:hidden">
       <Link
-        href="/painel/page1"
+        href="/painel/pacientes"
         className={cn(
           'flex flex-col items-center justify-center gap-1 text-white/70 hover:text-white/90',
-          pathname.includes('/painel/page1') && 'text-white'
+          pathname.includes('/painel/pacientes') && 'text-white'
         )}
       >
         <Users size={24} />
@@ -23,10 +23,10 @@ export function MobileNavBar() {
       </Link>
 
       <Link
-        href="/painel/page2"
+        href="/painel/agendamentos"
         className={cn(
           'flex flex-col items-center justify-center gap-1 text-white/70 hover:text-white/90',
-          pathname.includes('/painel/page2') && 'text-white'
+          pathname.includes('/painel/agendamentos') && 'text-white'
         )}
       >
         <CalendarDays size={24} />

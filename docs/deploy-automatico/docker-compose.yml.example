@@ -1,0 +1,55 @@
+# Exemplo de docker-compose.yml para deploy em ambiente Portainer com Docker Swarm
+# Este arquivo define como o container da aplicação será executado no ambiente de produção
+
+version: '3'
+services:
+  # Nome do serviço - deve ser substituído pelo nome do seu projeto em minúsculo
+  vibecoder:
+    # Imagem do GitHub Container Registry - substitua "jonathanmkt/vibecoder" pelo seu username/repositório
+    image: ghcr.io/jonathanmkt/vibecoder:latest
+    networks:
+      # Nome da rede externa no Docker Swarm - consulte seu administrador de infraestrutura
+      - Singanet
+    deploy:
+      # Limites de recursos para o container
+      resources:
+        limits:
+          # Limite de CPU - 0.5 = metade de um núcleo
+          cpus: '0.5'
+          # Limite de memória - 512 megabytes
+          memory: 512M
+      # Labels para configuração do Traefik (proxy reverso)
+      labels:
+      # IMPORTANTE: Use enable=1 em vez de enable=true para compatibilidade
+      - traefik.enable=1
+      # Regra de roteamento - substitua pelo seu domínio
+      - traefik.http.routers.vibecoder.rule=Host(`vibecoder.virtuetech.com.br`)
+      # Ponto de entrada para HTTPS
+      - traefik.http.routers.vibecoder.entrypoints=websecure
+      # Prioridade da rota
+      - traefik.http.routers.vibecoder.priority=1
+      # Configuração do certificado SSL automático via Let's Encrypt
+      - traefik.http.routers.vibecoder.tls.certresolver=letsencryptresolver
+      # Nome do serviço - deve ser o mesmo usado nas outras configurações
+      - traefik.http.routers.vibecoder.service=vibecoder
+      # Porta exposta pela aplicação - deve corresponder à porta no Dockerfile
+      - traefik.http.services.vibecoder.loadbalancer.server.port=3000
+      # Configuração para passar o cabeçalho Host original
+      - traefik.http.services.vibecoder.loadbalancer.passHostHeader=true
+      # Restrição de placement - garante que o container seja executado em um nó manager
+      placement:
+        constraints:
+          - node.role == manager
+    # Variáveis de ambiente - serão preenchidas pelo Portainer
+    environment:
+      - NEXT_PUBLIC_SUPABASE_URL=${NEXT_PUBLIC_SUPABASE_URL}
+      - NEXT_PUBLIC_SUPABASE_ANON_KEY=${NEXT_PUBLIC_SUPABASE_ANON_KEY}
+      - SUPABASE_SERVICE_ROLE_KEY=${SUPABASE_SERVICE_ROLE_KEY}
+      - SUPABASE_URL=${SUPABASE_URL}
+
+# Redes - define a rede externa que será usada
+networks:
+  # Nome da rede - deve ser uma rede existente no Docker Swarm
+  Singanet:
+    # Configuração de rede externa - não será criada pelo Docker Compose
+    external: true

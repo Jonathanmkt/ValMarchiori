@@ -20,7 +20,7 @@ export function TopBar({ pageTitle }: TopBarProps) {
   };
   
   return (
-    <header className='flex h-14 items-center justify-between bg-secondary px-6'>
+    <header className='flex h-14 items-center justify-between bg-tertiary px-6'>
       <h1 className='text-xl font-semibold text-secondary-foreground'>
         {getCurrentPageTitle()}
       </h1>

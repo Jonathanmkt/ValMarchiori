@@ -3,6 +3,7 @@ import * as DropdownMenuPrimitive from '@radix-ui/react-dropdown-menu';
 import { Check, ChevronRight, Circle } from 'lucide-react';
 
 import { cn } from '@/lib/utils';
+import { getInteractionClasses } from '@/lib/design-tokens';
 
 const DropdownMenu = DropdownMenuPrimitive.Root;
 
@@ -25,7 +26,7 @@ const DropdownMenuSubTrigger = React.forwardRef<
   <DropdownMenuPrimitive.SubTrigger
     ref={ref}
     className={cn(
-      'flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none focus:bg-accent focus:text-accent-foreground focus:outline-none focus:ring-2 focus:ring-dashboard-sidebar focus:ring-offset-2 data-[state=open]:bg-accent',
+      'flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none focus:bg-primary/10 focus:text-primary focus:outline-none focus:ring-2 focus:ring-primary/50 focus:ring-offset-2 data-[state=open]:bg-primary/10',
       inset && 'pl-8',
       className,
     )}
@@ -81,7 +82,11 @@ const DropdownMenuItem = React.forwardRef<
   <DropdownMenuPrimitive.Item
     ref={ref}
     className={cn(
-      'relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none transition-colors focus:bg-accent focus:text-accent-foreground focus:outline-none focus:ring-2 focus:ring-dashboard-sidebar focus:ring-offset-2 data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
+      [
+        'relative flex cursor-default select-none items-center rounded-sm px-2 py-1.5 text-sm outline-none',
+        getInteractionClasses('menuItem', ['default', 'hover', 'focus', 'disabled']),
+        'focus:!bg-primary/10 focus:!text-primary hover:!bg-primary/10 hover:!text-primary'
+      ].join(' '),
       inset && 'pl-8',
       className,
     )}
@@ -97,7 +102,11 @@ const DropdownMenuCheckboxItem = React.forwardRef<
   <DropdownMenuPrimitive.CheckboxItem
     ref={ref}
     className={cn(
-      'relative flex cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none transition-colors focus:bg-accent focus:text-accent-foreground focus:outline-none focus:ring-2 focus:ring-dashboard-sidebar focus:ring-offset-2 data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
+      [
+        'relative flex cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none',
+        getInteractionClasses('menuItem', ['default', 'hover', 'focus', 'disabled']),
+        'focus:!outline-none focus:!ring-2 focus:!ring-primary/50 focus:!ring-offset-2'
+      ].join(' '),
       className,
     )}
     checked={checked}
@@ -121,7 +130,11 @@ const DropdownMenuRadioItem = React.forwardRef<
   <DropdownMenuPrimitive.RadioItem
     ref={ref}
     className={cn(
-      'relative flex cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none transition-colors focus:bg-accent focus:text-accent-foreground focus:outline-none focus:ring-2 focus:ring-dashboard-sidebar focus:ring-offset-2 data-[disabled]:pointer-events-none data-[disabled]:opacity-50',
+      [
+        'relative flex cursor-default select-none items-center rounded-sm py-1.5 pl-8 pr-2 text-sm outline-none',
+        getInteractionClasses('menuItem', ['default', 'hover', 'focus', 'disabled']),
+        'focus:!outline-none focus:!ring-2 focus:!ring-primary/50 focus:!ring-offset-2'
+      ].join(' '),
       className,
     )}
     {...props}

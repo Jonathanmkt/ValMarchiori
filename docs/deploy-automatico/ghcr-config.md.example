@@ -1,0 +1,99 @@
+# Guia de Configuração do GitHub Container Registry (GHCR)
+
+Este guia explica detalhadamente como configurar o GitHub Container Registry para funcionar com o sistema de deploy automático.
+
+## Pontos Importantes na Configuração do GHCR
+
+### 1. Nomenclatura da Imagem
+
+- **Sempre use nomes em minúsculo** para repositórios no GHCR
+  - Correto: `ghcr.io/username/nome-do-projeto`
+  - Incorreto: `ghcr.io/username/Nome-do-Projeto`
+
+- **Padrão de nomenclatura recomendado**: `ghcr.io/[username]/[nome-do-projeto]`
+  - Substitua `[username]` pelo nome do usuário ou organização no GitHub
+  - Substitua `[nome-do-projeto]` pelo nome do projeto em minúsculo e com hífens
+
+### 2. Autenticação
+
+- **Use GITHUB_TOKEN em vez de tokens pessoais**
+  - O `GITHUB_TOKEN` é fornecido automaticamente pelo GitHub Actions
+  - Tem escopo limitado ao repositório específico
+  - É renovado automaticamente a cada workflow
+
+- **Configuração no workflow**:
+  ```yaml
+  - name: Log in to GitHub Container Registry
+    uses: docker/login-action@v3
+    with:
+      registry: ${{ env.REGISTRY }}
+      username: ${{ github.repository_owner }}
+      password: ${{ secrets.GITHUB_TOKEN }}
+  ```
+
+### 3. Permissões Necessárias
+
+- **No arquivo de workflow, defina as permissões**:
+  ```yaml
+  permissions:
+    contents: read    # Para ler o código do repositório
+    packages: write   # Para publicar pacotes (imagens Docker)
+    actions: read     # Para ler informações de actions
+    id-token: write   # Para gerar tokens de identidade
+  ```
+
+## Solução de Problemas Comuns
+
+### Erro 403 Forbidden
+
+Se encontrar erro "403 Forbidden" ao tentar publicar uma imagem:
+
+1. **Verifique a nomenclatura da imagem**
+   - Certifique-se de que está usando apenas letras minúsculas
+   - Exemplo correto: `jonathanmkt/vibecoder`
+   - Exemplo incorreto: `JonathanMkt/VibeCoder`
+
+2. **Verifique as permissões no GitHub**
+   - No GitHub, vá em "Settings" > "Packages"
+   - Verifique se o repositório tem acesso de escrita ao pacote
+
+3. **Verifique as permissões no workflow**
+   - Confirme que o job tem a permissão `packages: write`
+
+### Imagem Não Aparece no GHCR
+
+Se o build for bem-sucedido mas a imagem não aparecer:
+
+1. **Verifique os logs do workflow**
+   - Procure por mensagens de erro durante o estágio de push
+
+2. **Verifique a visibilidade do pacote**
+   - No GHCR, vá nas configurações do pacote e confirme a visibilidade
+
+## Recomendações de Segurança
+
+1. **Não use tokens pessoais de longa duração**
+   - Prefira sempre o `GITHUB_TOKEN` que é temporário
+
+2. **Configure corretamente o escopo das permissões**
+   - Use o princípio do menor privilégio possível
+
+3. **Revise regularmente os acessos aos pacotes**
+   - Remova acessos desnecessários
+
+4. **Considere usar a verificação de assinatura de imagens**
+   - Para maior segurança em ambientes críticos
+
+## Manutenção do GHCR
+
+1. **Limpeza periódica de versões antigas**
+   - Configure políticas de retenção para versões não utilizadas
+   - Mantenha apenas as versões necessárias para rollback
+
+2. **Monitoramento de uso**
+   - Monitore o uso de armazenamento do GHCR
+   - Fique atento aos limites do plano gratuito
+
+3. **Atualizações de segurança**
+   - Mantenha as imagens base atualizadas
+   - Configure dependabot para alertar sobre vulnerabilidades
