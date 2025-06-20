@@ -15,7 +15,8 @@ ENV NODE_ENV=production
 ENV NEXT_TELEMETRY_DISABLED 1
 
 # Instalação de dependências com controle de cache específico
-RUN npm ci --only=production
+# Não usar --only=production para incluir devDependencies necessárias para o build como autoprefixer
+RUN npm ci
 
 # Stage 3: Builder (compilação - muda frequentemente)
 FROM base AS builder
