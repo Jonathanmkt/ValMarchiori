@@ -1,66 +1,50 @@
 # Stage 1: Dependências e base
 FROM node:18-alpine AS base
 WORKDIR /app
-
-# Instalação de dependências do sistema (raramente muda)
+COPY package.json package-lock.json ./
+RUN npm ci
 RUN apk add --no-cache libc6-compat
 
-# Copiar apenas arquivos de controle de dependências
-COPY package.json package-lock.json ./
-
-# Stage 2: Instalação de dependências (muda apenas quando package.json muda)
-FROM base AS deps
-# Definir variáveis de ambiente para NPM
-ENV NODE_ENV=production
-ENV NEXT_TELEMETRY_DISABLED 1
-
-# Instalação de dependências com controle de cache específico
-# Não usar --only=production para incluir devDependencies necessárias para o build como autoprefixer
-RUN npm ci
-
-# Stage 3: Builder (compilação - muda frequentemente)
+# Stage 2: Construção para produção
 FROM base AS builder
 WORKDIR /app
-
-# Copiar dependências do estágio anterior
-COPY --from=deps /app/node_modules ./node_modules
-
-# Argumentos e variáveis de ambiente build
-ARG NEXT_PUBLIC_SUPABASE_URL
-ARG NEXT_PUBLIC_SUPABASE_ANON_KEY
-ENV NEXT_PUBLIC_SUPABASE_URL=$NEXT_PUBLIC_SUPABASE_URL
-ENV NEXT_PUBLIC_SUPABASE_ANON_KEY=$NEXT_PUBLIC_SUPABASE_ANON_KEY
-ENV NEXT_TELEMETRY_DISABLED 1
-
-# Copiar código-fonte (última etapa pois muda com frequência)
 COPY . .
 
-# Build da aplicação
-RUN npm run build
-
-# Stage 4: Produção (menor imagem possível)
-FROM node:18-alpine AS production
-WORKDIR /app
-
-# Variáveis de ambiente
-ENV NODE_ENV=production
-ENV NEXT_TELEMETRY_DISABLED 1
+# Argumentos do build
 ARG NEXT_PUBLIC_SUPABASE_URL
 ARG NEXT_PUBLIC_SUPABASE_ANON_KEY
+
+# Variáveis de ambiente para build
+ENV NEXT_PUBLIC_SUPABASE_URL=$NEXT_PUBLIC_SUPABASE_URL
+ENV NEXT_PUBLIC_SUPABASE_ANON_KEY=$NEXT_PUBLIC_SUPABASE_ANON_KEY
+ENV NEXT_TELEMETRY_DISABLED 1
+
+RUN npm run build
+
+# Stage 3: Ambiente de produção
+FROM node:18-alpine AS production
+WORKDIR /app
+ENV NODE_ENV production
+ENV NEXT_TELEMETRY_DISABLED 1
+
+# Argumentos do build para produção
+ARG NEXT_PUBLIC_SUPABASE_URL
+ARG NEXT_PUBLIC_SUPABASE_ANON_KEY
+
+# Variáveis de ambiente para produção
 ENV NEXT_PUBLIC_SUPABASE_URL=$NEXT_PUBLIC_SUPABASE_URL
 ENV NEXT_PUBLIC_SUPABASE_ANON_KEY=$NEXT_PUBLIC_SUPABASE_ANON_KEY
 
-# Copiar apenas arquivos necessários para execução
+# Copiar apenas arquivos necessários
 COPY --from=builder /app/public ./public
 COPY --from=builder /app/.next ./.next
 COPY --from=builder /app/node_modules ./node_modules
 COPY --from=builder /app/package.json ./package.json
 
-# Configuração de segurança
+# Usuário não-root para segurança
 RUN addgroup --system --gid 1001 nodejs
 RUN adduser --system --uid 1001 nextjs
 USER nextjs
 
-# Configuração de execução
 EXPOSE 3000
 CMD ["npm", "run", "start"]

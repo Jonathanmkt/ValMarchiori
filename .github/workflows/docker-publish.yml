@@ -23,33 +23,9 @@ jobs:
     steps:
       - name: Checkout repository
         uses: actions/checkout@v4
-        
-      # Cache do NPM
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: '18'
-          cache: 'npm'
-          
-      # Cache do Next.js
-      - name: Cache Next.js build
-        uses: actions/cache@v3
-        with:
-          path: |
-            .next/cache
-          key: ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-${{ hashFiles('**/*.js', '**/*.jsx', '**/*.ts', '**/*.tsx') }}
-          restore-keys: |
-            ${{ runner.os }}-nextjs-${{ hashFiles('**/package-lock.json') }}-
-            ${{ runner.os }}-nextjs-
 
-      # Configuração do Docker Buildx
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
-        with:
-          # Usar o driver de buildkit para melhor cache
-          driver-opts: |
-            image=moby/buildkit:master
-            network=host
 
       - name: Log in to GitHub Container Registry
         uses: docker/login-action@v3
@@ -74,13 +50,8 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          # Cache avançado
-          cache-from: |
-            type=gha,scope=build-${{ github.ref }}
-            type=gha,scope=deps-${{ hashFiles('**/package-lock.json') }}
-          cache-to: |
-            type=gha,mode=max,scope=build-${{ github.ref }}
-            type=gha,mode=max,scope=deps-${{ hashFiles('**/package-lock.json') }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
           build-args: |
             NEXT_PUBLIC_SUPABASE_URL=${{ secrets.NEXT_PUBLIC_SUPABASE_URL }}
             NEXT_PUBLIC_SUPABASE_ANON_KEY=${{ secrets.NEXT_PUBLIC_SUPABASE_ANON_KEY }}

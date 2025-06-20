@@ -127,7 +127,7 @@ export function Sidebar({ links }: SidebarProps) {
           >
             <div className="w-[180px] flex flex-col whitespace-nowrap">
               <h1 className='text-2xl font-semibold text-gray-400 leading-none font-playfair'>
-                Agendamentos
+                Agendamento
               </h1>
               <span className='text-sm text-white/60'>Organização e tecnologia</span>
             </div>
