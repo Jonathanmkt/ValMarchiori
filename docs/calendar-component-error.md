@@ -2,7 +2,7 @@
 
 ## Introdução
 
-Este relatório detalha a configuração, estilização e implementação do componente Calendar do shadcn/ui no projeto ValMarchiori. O objetivo é identificar todos os elementos que afetam a renderização visual do componente para possibilitar comparação futura com outro projeto.
+Este relatório detalha a configuração, estilização e implementação do componente Calendar do shadcn/ui no projeto Singaerj. O objetivo é identificar todos os elementos que afetam a renderização visual do componente para possibilitar comparação futura com outro projeto.
 
 ## Implementação do Componente
 
