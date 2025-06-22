@@ -42,51 +42,72 @@ export function ForgotPasswordForm({ className, ...props }: React.ComponentProps
   }
 
   return (
-    <div className={cn('flex flex-col gap-6', className)} {...props}>
+    <div className={cn('flex flex-col w-full h-full bg-white/60 backdrop-blur-lg backdrop-saturate-150 pt-16 px-6 pb-8 rounded-lg shadow-lg', className)} {...props}>
       {success ? (
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-2xl">Check Your Email</CardTitle>
-            <CardDescription>Password reset instructions sent</CardDescription>
+        <Card className="w-full border-none bg-transparent shadow-none">
+          <CardHeader className="p-0 pb-10 text-center">
+            <CardTitle className="text-3xl font-bold mb-2">Verifique seu email</CardTitle>
+            <CardDescription className="text-lg">Instruções para redefinição de senha enviadas</CardDescription>
           </CardHeader>
-          <CardContent>
-            <p className="text-sm text-muted-foreground">
-              If you registered using your email and password, you will receive a password reset
-              email.
-            </p>
+          <CardContent className="p-0">
+            <div className="flex flex-col w-full space-y-6">
+              <p className="text-base w-[70%] mx-auto text-center">
+                Se você se registrou usando seu email e senha, você receberá um email para redefinição de senha.
+                Verifique sua caixa de entrada e spam.
+              </p>
+              
+              <div className="w-[70%] mx-auto pt-4">
+                <Button 
+                  type="button" 
+                  className="w-full h-12 text-base" 
+                  onClick={() => window.location.href = '/auth/login'}
+                >
+                  Fazer login novamente
+                </Button>
+              </div>
+            </div>
           </CardContent>
         </Card>
       ) : (
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-2xl">Reset Your Password</CardTitle>
-            <CardDescription>
-              Type in your email and we&apos;ll send you a link to reset your password
+        <Card className="w-full border-none bg-transparent shadow-none">
+          <CardHeader className="p-0 pb-10 text-center">
+            <CardTitle className="text-3xl font-bold mb-2">Recuperar senha</CardTitle>
+            <CardDescription className="text-lg">
+              Digite seu email e enviaremos um link para redefinir sua senha
             </CardDescription>
           </CardHeader>
-          <CardContent>
-            <form onSubmit={handleForgotPassword}>
-              <div className="flex flex-col gap-6">
-                <div className="grid gap-2">
-                  <Label htmlFor="email">Email</Label>
+          <CardContent className="p-0">
+            <form onSubmit={handleForgotPassword} className="w-full">
+              <div className="flex flex-col w-full space-y-6">
+                {error && <p className="text-sm text-destructive-500 w-[70%] mx-auto -mb-4">{error}</p>}
+                
+                <div className="w-[70%] mx-auto space-y-1">
+                  <Label htmlFor="email" className="text-base block text-left">Email</Label>
                   <Input
                     id="email"
                     type="email"
-                    placeholder="m@example.com"
+                    placeholder="seu@email.com"
                     required
                     value={email}
                     onChange={(e) => setEmail(e.target.value)}
+                    className="h-12 text-base w-full border-gray-500 focus:border-gray-700 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
                   />
                 </div>
-                {error && <p className="text-sm text-red-500">{error}</p>}
-                <Button type="submit" className="w-full" disabled={isLoading}>
-                  {isLoading ? 'Sending...' : 'Send reset email'}
-                </Button>
+                
+                <div className="w-[70%] mx-auto pt-2">
+                  <Button 
+                    type="submit" 
+                    className="w-full h-12 text-base" 
+                    disabled={isLoading}
+                  >
+                    {isLoading ? 'Enviando...' : 'Enviar email de recuperação'}
+                  </Button>
+                </div>
               </div>
-              <div className="mt-4 text-center text-sm">
-                Already have an account?{' '}
-                <Link href="/auth/login" className="underline underline-offset-4">
-                  Login
+              
+              <div className="w-[70%] mx-auto pt-6 text-center">
+                <Link href="/auth/login" className="text-primary hover:underline text-base">
+                  Já tem uma conta? Faça login
                 </Link>
               </div>
             </form>

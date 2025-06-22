@@ -12,10 +12,10 @@ export function MobileNavBar() {
   return (
     <nav className="fixed bottom-0 left-0 right-0 bg-primary h-16 flex items-center justify-center gap-16 md:hidden">
       <Link
-        href="/painel/pacientes"
+        href="/painel/associados"
         className={cn(
           'flex flex-col items-center justify-center gap-1 text-white/70 hover:text-white/90',
-          pathname.includes('/painel/pacientes') && 'text-white'
+          pathname.includes('/painel/associados') && 'text-white'
         )}
       >
         <Users size={24} />

@@ -12,18 +12,21 @@ import {
 } from '@/components/ui/card'
 import { Input } from '@/components/ui/input'
 import { Label } from '@/components/ui/label'
-import Link from 'next/link'
-import { useRouter } from 'next/navigation'
 import { useState } from 'react'
+import Image from 'next/image'
+import Link from 'next/link'
+import { useToast } from '@/components/ui/useToast'
 
 export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRef<'div'>) {
+  const toast = useToast()
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
-  const router = useRouter()
+  const [isGoogleLoading, setIsGoogleLoading] = useState(false)
+  const [showPassword, setShowPassword] = useState(false)
 
-  const handleLogin = async (e: React.FormEvent) => {
+  const handleEmailLogin = async (e: React.FormEvent) => {
     e.preventDefault()
     const supabase = createClient()
     setIsLoading(true)
@@ -34,67 +37,156 @@ export function LoginForm({ className, ...props }: React.ComponentPropsWithoutRe
         email,
         password,
       })
-      if (error) throw error
-      // Update this route to redirect to an authenticated route. The user already has an active session.
-      router.push('/protected')
+
+      if (error) {
+        toast.error('Login ou senha inválidos', 'Verifique suas credenciais e tente de novo')
+        throw error
+      }
     } catch (error: unknown) {
-      setError(error instanceof Error ? error.message : 'An error occurred')
-    } finally {
+      setError(error instanceof Error ? error.message : 'Ocorreu um erro durante o login')
       setIsLoading(false)
     }
   }
 
+  const handleGoogleLogin = async () => {
+    const supabase = createClient()
+    setIsGoogleLoading(true)
+    setError(null)
+
+    try {
+      const { error } = await supabase.auth.signInWithOAuth({
+        provider: 'google',
+        options: {
+          redirectTo: `${window.location.origin}/auth/oauth?next=/protected`,
+        },
+      })
+
+      if (error) {
+        toast.error('Login ou senha inválidos', 'Não foi possível fazer login com o Google')
+        throw error
+      }
+    } catch (error: unknown) {
+      setError(error instanceof Error ? error.message : 'Ocorreu um erro durante o login')
+      setIsGoogleLoading(false)
+    }
+  }
+
   return (
-    <div className={cn('flex flex-col gap-6', className)} {...props}>
-      <Card>
-        <CardHeader>
-          <CardTitle className="text-2xl">Login</CardTitle>
-          <CardDescription>Enter your email below to login to your account</CardDescription>
+    <div className={cn('flex flex-col gap-6 w-full h-full bg-white/60 backdrop-blur-lg backdrop-saturate-150 pt-[60px] px-6 pb-6 rounded-lg shadow-lg', className)} {...props}>
+      <Card className="w-full border-none bg-transparent shadow-none">
+        <CardHeader className="p-0 pb-8 space-y-3 pl-[15%]">
+          <CardTitle className="text-3xl font-bold">Bem-vindo!</CardTitle>
+          <CardDescription className="text-lg">Entre na sua conta para continuar</CardDescription>
         </CardHeader>
-        <CardContent>
-          <form onSubmit={handleLogin}>
-            <div className="flex flex-col gap-6">
-              <div className="grid gap-2">
-                <Label htmlFor="email">Email</Label>
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="m@example.com"
-                  required
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                />
-              </div>
-              <div className="grid gap-2">
-                <div className="flex items-center">
-                  <Label htmlFor="password">Password</Label>
-                  <Link
-                    href="/auth/forgot-password"
-                    className="ml-auto inline-block text-sm underline-offset-4 hover:underline"
-                  >
-                    Forgot your password?
-                  </Link>
+        <CardContent className="p-0 space-y-6">
+          <div className="flex flex-col gap-8 items-center">
+            {/* Formulário de login com email/senha */}
+            <form onSubmit={handleEmailLogin} className="w-full">
+              <div className="flex flex-col gap-6 w-full">
+                {error && <p className="text-sm text-destructive-500">{error}</p>}
+                
+                <div className="flex flex-col gap-2 w-full">
+                  <div className="w-[70%] mx-auto">
+                    <Label htmlFor="email" className="text-base block text-left">Email</Label>
+                    <Input
+                      id="email"
+                      type="email"
+                      value={email}
+                      onChange={(e) => setEmail(e.target.value)}
+                      placeholder="seu@email.com"
+                      required
+                      className="h-12 text-base w-full mt-1 border-gray-500 focus:border-gray-700 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+                    />
+                  </div>
                 </div>
-                <Input
-                  id="password"
-                  type="password"
-                  required
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                />
+                
+                <div className="flex flex-col gap-2 w-full">
+                  <div className="w-[70%] mx-auto">
+                    <Label htmlFor="password" className="text-base block text-left">Senha</Label>
+                    <div className="relative w-full">
+                      <Input
+                        id="password"
+                        type={showPassword ? "text" : "password"}
+                        value={password}
+                        onChange={(e) => setPassword(e.target.value)}
+                        required
+                        className="h-12 text-base w-full pr-10 mt-1 border-gray-500 focus:border-gray-700 focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2"
+                      />
+                      <button
+                        type="button"
+                        className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700"
+                        onClick={() => setShowPassword(!showPassword)}
+                      >
+                        {showPassword ? (
+                          <svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24" />
+                            <line x1="1" y1="1" x2="23" y2="23" />
+                          </svg>
+                        ) : (
+                          <svg xmlns="http://www.w3.org/2000/svg" width="19" height="19" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z" />
+                            <circle cx="12" cy="12" r="3" />
+                          </svg>
+                        )}
+                      </button>
+                    </div>
+                    <div className="flex justify-end mt-2">
+                      <Link href="/auth/forgot-password" className="text-primary hover:underline text-xs">
+                        Esqueceu sua senha?
+                      </Link>
+                    </div>
+                  </div>
+                </div>
+                
+                <div className="w-[70%] mx-auto">
+                  <Button 
+                    type="submit" 
+                    className="w-full h-12 text-base mt-6 font-medium" 
+                    disabled={isLoading}
+                  >
+                    {isLoading ? 'Entrando...' : 'Entrar com Email'}
+                  </Button>
+                </div>
               </div>
-              {error && <p className="text-sm text-red-500">{error}</p>}
-              <Button type="submit" className="w-full" disabled={isLoading}>
-                {isLoading ? 'Logging in...' : 'Login'}
+            </form>
+            
+            {/* Separador */}
+            <div className="w-[70%] mx-auto my-2">
+              <div className="relative flex items-center">
+                <div className="flex-grow border-t border-gray-300"></div>
+                <span className="px-4 text-gray-500 text-sm">ou</span>
+                <div className="flex-grow border-t border-gray-300"></div>
+              </div>
+            </div>
+            
+            {/* Botão de login com Google */}
+            <div className="w-[70%] mx-auto">
+              <Button 
+                type="button" 
+                variant="outline" 
+                className="w-full h-12 text-base flex items-center justify-center gap-2 font-medium" 
+                onClick={handleGoogleLogin}
+                disabled={isGoogleLoading}
+              >
+                {!isGoogleLoading && (
+                  <Image 
+                    src="/google-logo.svg" 
+                    alt="Google" 
+                    width={20} 
+                    height={20} 
+                  />
+                )}
+                {isGoogleLoading ? 'Entrando...' : 'Continuar com Google'}
               </Button>
             </div>
-            <div className="mt-4 text-center text-sm">
-              Don&apos;t have an account?{' '}
-              <Link href="/auth/sign-up" className="underline underline-offset-4">
-                Sign up
+            
+            {/* Link para cadastro */}
+            <div className="w-[70%] mx-auto mt-6">
+              <Link href="/auth/sign-up" className="text-primary hover:underline text-base block text-center">
+                Não tem uma conta? Cadastre-se
               </Link>
             </div>
-          </form>
+          </div>
         </CardContent>
       </Card>
     </div>

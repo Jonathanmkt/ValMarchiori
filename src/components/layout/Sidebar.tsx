@@ -7,7 +7,8 @@ import Link from 'next/link';
 import { cn } from '@/lib/utils/utils';
 import { useSidebar } from './SidebarContext';
 import { useNavigation } from '@/hooks/useNavigation/useNavigation';
-import { LucideIcon, CalendarDays } from 'lucide-react';
+import { LucideIcon } from 'lucide-react';
+import Image from 'next/image';
 
 interface SidebarLink {
   title: string;
@@ -99,8 +100,14 @@ export function Sidebar({ links }: SidebarProps) {
                 }
               )}
             >
-              <div className="flex items-center justify-center w-[80px] h-[80px] bg-gray-400 rounded-full">
-                <CalendarDays size={60} className="text-primary" />
+              <div className="flex items-center justify-center w-[80px] h-[80px] rounded-full overflow-hidden">
+                <Image 
+                  src="/logo-medium.webp" 
+                  alt="Logo" 
+                  width={80} 
+                  height={80}
+                  className="object-cover w-full h-full"
+                />
               </div>
             </motion.div>
           </motion.div>
@@ -126,10 +133,10 @@ export function Sidebar({ links }: SidebarProps) {
             )}
           >
             <div className="w-[180px] flex flex-col whitespace-nowrap">
-              <h1 className='text-2xl font-semibold text-gray-400 leading-none font-playfair'>
-                Agendamento
+              <h1 className='text-2xl font-semibold text-primary-foreground leading-none font-playfair text-center w-full'>
+                Singaerj
               </h1>
-              <span className='text-sm text-white/60'>Organização e tecnologia</span>
+              <span className='text-sm text-primary-foreground text-center w-full'>Respeito e Confiança</span>
             </div>
           </motion.div>
         </div>
@@ -143,9 +150,9 @@ export function Sidebar({ links }: SidebarProps) {
             href={link.href}
             className={cn(
               'flex items-center rounded-lg mb-1 relative h-10',
-              'p-2',
-              'text-white/70 hover:text-white/90 hover:bg-white/10',
-              pathname.includes(link.href) && 'text-white bg-white/20 hover:bg-white/25'
+              'p-2 bg-white/5',
+              'text-primary-foreground hover:bg-white/10',
+              pathname.includes(link.href) && 'bg-white/20 hover:bg-white/25'
             )}
             style={{ width: collapsed ? 48 : 256, paddingRight: collapsed ? 8 : 16 }}
           >

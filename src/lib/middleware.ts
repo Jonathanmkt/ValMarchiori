@@ -47,6 +47,60 @@ export async function updateSession(request: NextRequest) {
     url.pathname = '/auth/login'
     return NextResponse.redirect(url)
   }
+  
+  // Verificação de roles para usuários autenticados
+  if (user) {
+    // Rotas públicas que não precisam de verificação de roles
+    if (
+      request.nextUrl.pathname.startsWith('/login') ||
+      request.nextUrl.pathname.startsWith('/auth')
+    ) {
+      return supabaseResponse
+    }
+    
+    try {
+      // Buscar o perfil do usuário com suas roles
+      const { data: profile } = await supabase
+        .from('profiles')
+        .select('roles')
+        .eq('id', user.id)
+        .single()
+      
+      if (profile?.roles) {
+        const roles = profile.roles
+        
+        // Verificar se o usuário tem apenas a role 'usuario'
+        const isOnlyUser = roles.length === 1 && roles.includes('usuario')
+        
+        // Verificar se o usuário tem role adicional (tesoureiro ou secretario)
+        const hasAdditionalRole = roles.includes('tesoureiro') || roles.includes('secretario')
+        
+        // Verificar se o usuário está na página inicial
+        if (request.nextUrl.pathname === '/') {
+          // Redirecionar com base nas roles
+          const url = request.nextUrl.clone()
+          url.pathname = hasAdditionalRole ? '/painel' : '/protected'
+          return NextResponse.redirect(url)
+        }
+        
+        // Redirecionar com base nas roles e na URL atual
+        if (isOnlyUser && request.nextUrl.pathname.startsWith('/painel')) {
+          // Usuário simples tentando acessar o painel
+          const url = request.nextUrl.clone()
+          url.pathname = '/protected'
+          return NextResponse.redirect(url)
+        } else if (hasAdditionalRole && request.nextUrl.pathname === '/protected') {
+          // Usuário com roles adicionais tentando acessar área de usuário comum
+          const url = request.nextUrl.clone()
+          url.pathname = '/painel'
+          return NextResponse.redirect(url)
+        }
+      }
+    } catch (error) {
+      // Em caso de erro, apenas continua sem fazer redirecionamento específico
+      console.error('Erro ao verificar roles do usuário:', error)
+    }
+  }
 
   // IMPORTANT: You *must* return the supabaseResponse object as it is.
   // If you're creating a new response object with NextResponse.next() make sure to:

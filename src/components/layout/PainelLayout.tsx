@@ -5,7 +5,7 @@ import { Toast } from '@/components/ui/toast';
 import { Sidebar } from './Sidebar';
 import { TopBar } from './Topbar';
 import { SidebarProvider } from './SidebarContext';
-import { CalendarDays, Users, Package2 } from 'lucide-react';
+import { Users } from 'lucide-react';
 import { MobileNavBar } from './MobileNavBar';
 
 interface PainelLayoutProps {
@@ -14,19 +14,9 @@ interface PainelLayoutProps {
 
 const sidebarLinks = [
   {
-    title: 'Clientes',
-    href: '/painel/pacientes',
+    title: 'Associados',
+    href: '/painel/associados',
     icon: Users
-  },
-  {
-    title: 'Agendamentos',
-    href: '/painel/agendamentos',
-    icon: CalendarDays
-  },
-  {
-    title: 'Serviços',
-    href: '/painel/servicos',
-    icon: Package2
   }
 ];
 

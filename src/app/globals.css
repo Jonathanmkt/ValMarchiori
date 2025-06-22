@@ -5,17 +5,17 @@
 @layer base {
   :root {
     /* ===== Cores de Marca ===== */
-    --primary: 0 0% 9%;        /* Azul marinho escuro - Cor principal */
-    --primary-foreground: 0 0% 98%;
+    --primary: #0D6759;           /* Verde escuro - Cor principal */
+    --primary-foreground: #EDEBB9;  /* Amarelo claro - Texto sobre fundo primário */
     
-    --secondary: 0 0% 96.1%;     /* Azul marinho médio - Cor secundária */
-    --secondary-foreground: 0 0% 9%;
+    --secondary: #329788;         /* Verde médio - Cor secundária */
+    --secondary-foreground: #FFFFFF;
     
-    --tertiary: #51738D;     /* Azul acinzentado - Cor terciária */
+    --tertiary: #68b6aa;          /* Verde claro - Cor terciária */
     --tertiary-foreground: #FFFFFF;
     
-    --accent: 0 0% 96.1%;       /* Azul claro vibrante - Destaque */
-    --accent-foreground: 0 0% 9%;
+    --accent: #F5F5F5;            /* Cinza claro - Destaque */
+    --accent-foreground: #171717;
     
     --light: #D1DCE8;        /* Cinza-azulado mais escuro para fundos de painéis */
     --light-foreground: #0F172A;  /* Cor de texto com bom contraste */
