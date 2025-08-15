@@ -4,9 +4,9 @@
 version: '3'
 services:
   # Nome do serviço - deve ser substituído pelo nome do seu projeto em minúsculo
-  vibecoder:
-    # Imagem do GitHub Container Registry - substitua "jonathanmkt/vibecoder" pelo seu username/repositório
-    image: ghcr.io/jonathanmkt/vibecoder:latest
+  youlab:
+    # Imagem do GitHub Container Registry - substitua "jonathanmkt/youlab" pelo seu username/repositório
+    image: ghcr.io/jonathanmkt/youlab:latest
     networks:
       # Nome da rede externa no Docker Swarm - consulte seu administrador de infraestrutura
       - Singanet
@@ -23,19 +23,14 @@ services:
       # IMPORTANTE: Use enable=1 em vez de enable=true para compatibilidade
       - traefik.enable=1
       # Regra de roteamento - substitua pelo seu domínio
-      - traefik.http.routers.vibecoder.rule=Host(`vibecoder.virtuetech.com.br`)
+      - traefik.http.routers.youlab.rule=Host(`youlab.com.br`)
       # Ponto de entrada para HTTPS
-      - traefik.http.routers.vibecoder.entrypoints=websecure
-      # Prioridade da rota
-      - traefik.http.routers.vibecoder.priority=1
-      # Configuração do certificado SSL automático via Let's Encrypt
-      - traefik.http.routers.vibecoder.tls.certresolver=letsencryptresolver
-      # Nome do serviço - deve ser o mesmo usado nas outras configurações
-      - traefik.http.routers.vibecoder.service=vibecoder
-      # Porta exposta pela aplicação - deve corresponder à porta no Dockerfile
-      - traefik.http.services.vibecoder.loadbalancer.server.port=3000
-      # Configuração para passar o cabeçalho Host original
-      - traefik.http.services.vibecoder.loadbalancer.passHostHeader=true
+      - traefik.http.routers.youlab.entrypoints=websecure
+      - traefik.http.routers.youlab.priority=1
+      - traefik.http.routers.youlab.tls.certresolver=letsencryptresolver
+      - traefik.http.routers.youlab.service=youlab
+      - traefik.http.services.youlab.loadbalancer.server.port=3000
+      - traefik.http.services.youlab.loadbalancer.passHostHeader=true
       # Restrição de placement - garante que o container seja executado em um nó manager
       placement:
         constraints:

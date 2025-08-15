@@ -10,7 +10,7 @@ export const Footer: React.FC = () => {
         <div className="grid md:grid-cols-4 gap-8">
           <div>
             <div className="flex items-center space-x-2 mb-4">
-              <span className="text-2xl font-bold">ValMarchiori</span>
+              <span className="text-2xl font-bold">YouLab</span>
             </div>
             <p className="text-gray-300">
               IA integrada para atendimento e agendamentos 24/7
@@ -35,14 +35,14 @@ export const Footer: React.FC = () => {
           <div>
             <h4 className="font-semibold mb-4">Contato</h4>
             <ul className="space-y-2 text-gray-300">
-              <li>suporte@valmarchiori.com</li>
+              <li>suporte@youlab.com.br</li>
               <li>(11) 9999-9999</li>
               <li>Segunda à Sexta, 9h às 18h</li>
             </ul>
           </div>
         </div>
         <div className="border-t border-white/20 mt-8 pt-8 text-center text-gray-300">
-          <p>&copy; {new Date().getFullYear()} ValMarchiori. Todos os direitos reservados.</p>
+          <p>&copy; {new Date().getFullYear()} YouLab. Todos os direitos reservados.</p>
         </div>
       </div>
     </footer>

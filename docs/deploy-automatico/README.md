@@ -1,4 +1,4 @@
-# Guia de Deploy Automático - Vibe Coder
+# Guia de Deploy Automático - YouLab
 
 Este diretório contém arquivos de **exemplo** para configuração do sistema de deploy automático usando GitHub Actions, GitHub Container Registry (GHCR) e Portainer.
 
@@ -46,7 +46,7 @@ As labels do Traefik devem seguir exatamente este formato no Docker Swarm:
 ```yaml
       labels:
       - traefik.enable=1
-      - traefik.http.routers.[projeto].rule=Host(`[projeto].virtuetech.com.br`)
+      - traefik.http.routers.[projeto].rule=Host(`youlab.com.br`)
       - traefik.http.routers.[projeto].entrypoints=websecure
       - traefik.http.routers.[projeto].priority=1
       - traefik.http.routers.[projeto].tls.certresolver=letsencryptresolver
@@ -101,8 +101,8 @@ O workflow requer as seguintes permissões:
 1. **Nomenclatura e Configuração**:
    - O nome da imagem no GHCR deve estar em minúsculo
    - IMPORTANTE: O nome da imagem deve ser igual em todos os arquivos:
-     - No `docker-publish.yml`: `IMAGE_NAME: jonathanmkt/vibecoder`
-     - No `docker-compose.yml`: `image: ghcr.io/jonathanmkt/vibecoder:latest`
+     - No `docker-publish.yml`: `IMAGE_NAME: jonathanmkt/youlab`
+     - No `docker-compose.yml`: `image: ghcr.io/jonathanmkt/youlab:latest`
    - Nunca reutilize nomes de outros projetos, cada projeto deve ter seu próprio nome único
 
 2. **Autenticação**:
@@ -110,12 +110,11 @@ O workflow requer as seguintes permissões:
    - Configurar permissões corretas no workflow
 
 3. **Portainer**:
-   - Domínio: [nome-do-projeto].[dominio-base] (exemplo: vibecoder.virtuetech.com.br)
+   - Domínio: youlab.com.br
    - URL do Portainer: https://portainer.singaerj.org.br/
    
    IMPORTANTE: 
-   - Substitua [nome-do-projeto] pelo nome do seu projeto em minúsculo
-   - Substitua [dominio-base] pelo domínio base do seu ambiente (exemplo: virtuetech.com.br)
+   - Domínio principal: youlab.com.br
 
 ## Como Adaptar para Novos Projetos
 
@@ -127,9 +126,9 @@ Para adaptar este sistema para um novo projeto:
    - Crie o diretório `.github/workflows/` e copie `docker-publish.yml`
 
 2. **Edite cada arquivo substituindo**:
-   - `vibecoder` pelo nome do seu projeto (em minúsculo)
+   - `youlab` pelo nome do seu projeto (em minúsculo)
    - `jonathanmkt` pelo nome do usuário GitHub
-   - `virtuetech.com.br` pelo domínio base
+   - `youlab.com.br` pelo domínio principal
 
 3. **Configure os Secrets no repositório GitHub**:
    - Configure todas as secrets mencionadas acima

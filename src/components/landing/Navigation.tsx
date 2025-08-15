@@ -28,7 +28,7 @@ export const Navigation: React.FC<NavigationProps> = ({ scrollToSection }) => {
             <div>
               <CalendarDays className="w-8 h-8 text-accent" />
             </div>
-            <span className="text-2xl font-bold text-white">Agendamento Virtuetech</span>
+            <span className="text-2xl font-bold text-white">YouLab</span>
           </motion.div>
           
           <div className="hidden md:flex space-x-8">

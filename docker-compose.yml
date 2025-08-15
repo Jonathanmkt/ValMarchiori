@@ -1,7 +1,7 @@
 version: '3'
 services:
-  agendamentos:
-    image: ghcr.io/jonathanmkt/agendamentos:latest
+  youlab:
+    image: ghcr.io/jonathanmkt/youlab:latest
     networks:
       - Singanet
     deploy:
@@ -11,13 +11,13 @@ services:
           memory: 512M
       labels:
       - traefik.enable=1
-      - traefik.http.routers.agendamentos.rule=Host(`agendamento.virtuetech.com.br`)
-      - traefik.http.routers.agendamentos.entrypoints=websecure
-      - traefik.http.routers.agendamentos.priority=1
-      - traefik.http.routers.agendamentos.tls.certresolver=letsencryptresolver
-      - traefik.http.routers.agendamentos.service=agendamentos
-      - traefik.http.services.agendamentos.loadbalancer.server.port=3000
-      - traefik.http.services.agendamentos.loadbalancer.passHostHeader=true
+      - traefik.http.routers.youlab.rule=Host(`youlab.com.br`)
+      - traefik.http.routers.youlab.entrypoints=websecure
+      - traefik.http.routers.youlab.priority=1
+      - traefik.http.routers.youlab.tls.certresolver=letsencryptresolver
+      - traefik.http.routers.youlab.service=youlab
+      - traefik.http.services.youlab.loadbalancer.server.port=3000
+      - traefik.http.services.youlab.loadbalancer.passHostHeader=true
       placement:
         constraints:
           - node.role == manager
